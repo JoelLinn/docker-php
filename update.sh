@@ -20,6 +20,9 @@ declare -A gpgKeys=(
 	# https://www.php.net/downloads.php#gpg-7.1
 	# https://www.php.net/gpg-keys.php#gpg-7.1
 	[7.1]='A917B1ECDA84AEC2B568FED6F50ABC807BD5DCD0 528995BFEDFBA7191D46839EF9BA0ADA31CBD89E 1729F83938DA44E27BA0F4D3DBDB397470D12172'
+
+	# https://www.php.net/gpg-keys.php#gpg-5.6
+	[5.6]='6E4F6AB321FDC07F2C332E3AC2BF0BC433CFC8B3 0BD78B5F97500D450838F95DFE857D9A90D90EC1'
 )
 # see https://www.php.net/downloads.php
 
