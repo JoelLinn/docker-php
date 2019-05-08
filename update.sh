@@ -151,18 +151,18 @@ for version in "${versions[@]}"; do
 			if [ "$variant" = 'apache' ]; then
 				cp -a apache2-foreground "$version/$suite/$variant/"
 			fi
-			if [ "$majorVersion" = '7' -a "$minorVersion" -lt '2' ] || [ "$suite" = 'jessie' ]; then
+			if [ "$majorVersion" = '7' -a "$minorVersion" -lt '2' ] || [ "$majorVersion" -lt '7' ] || [ "$suite" = 'jessie' ]; then
 				# argon2 password hashing is only supported in 7.2+ and stretch+ / alpine 3.8+
 				sed -ri \
 					-e '/##<argon2>##/,/##<\/argon2>##/d' \
 					-e '/argon2/d' \
 					"$version/$suite/$variant/Dockerfile"
 			fi
-			if [ "$majorVersion" = '7' -a "$minorVersion" -lt '2' ]; then
+			if [ "$majorVersion" = '7' -a "$minorVersion" -lt '2' ] || [ "$majorVersion" -lt '7' ]; then
 				# sodium is part of php core 7.2+ https://wiki.php.net/rfc/libsodium
 				sed -ri '/sodium/d' "$version/$suite/$variant/Dockerfile"
 			fi
-			if [ "$variant" = 'fpm' -a "$majorVersion" = '7' -a "$minorVersion" -lt '3' ]; then
+			if [ "$variant" = 'fpm' -a "$majorVersion" = '7' -a "$minorVersion" -lt '3' ] || [ "$majorVersion" -lt '7' ]; then
 				# php-fpm "decorate_workers_output" is only available in 7.3+
 				sed -ri \
 					-e '/decorate_workers_output/d' \
