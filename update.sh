@@ -169,6 +169,10 @@ for version in "${versions[@]}"; do
 					-e '/log_limit/d' \
 					"$version/$suite/$variant/Dockerfile"
 			fi
+                        if [ "$majorVersion" -lt '7' -a "$suite" = 'stretch' ]; then
+                                # php 5.x does not build with openssl 1.1
+                                sed -ri 's/libssl-dev/libssl1.0-dev/' "$version/$suite/$variant/Dockerfile"
+                        fi
 
 			# remove any _extra_ blank lines created by the deletions above
 			awk '
