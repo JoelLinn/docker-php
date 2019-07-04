@@ -29,12 +29,15 @@ ENV PHPIZE_DEPS \
 		re2c
 
 # persistent / runtime deps
-RUN apt-get update && apt-get install -y \
+RUN set -eux; \
+	apt-get update; \
+	apt-get install -y --no-install-recommends \
 		$PHPIZE_DEPS \
 		ca-certificates \
 		curl \
 		xz-utils \
-	--no-install-recommends && rm -r /var/lib/apt/lists/*
+	; \
+	rm -rf /var/lib/apt/lists/*
 
 ENV PHP_INI_DIR /usr/local/etc/php
 RUN set -eux; \
@@ -64,25 +67,17 @@ ENV PHP_VERSION 5.6.40
 ENV PHP_URL="https://www.php.net/get/php-5.6.40.tar.xz/from/this/mirror" PHP_ASC_URL="https://www.php.net/get/php-5.6.40.tar.xz.asc/from/this/mirror"
 ENV PHP_SHA256="1369a51eee3995d7fbd1c5342e5cc917760e276d561595b6052b21ace2656d1c" PHP_MD5=""
 
-RUN set -xe; \
+RUN set -eux; \
 	\
-	fetchDeps=' \
-		wget \
-	'; \
-	if ! command -v gpg > /dev/null; then \
-		fetchDeps="$fetchDeps \
-			dirmngr \
-			gnupg \
-		"; \
-	fi; \
+	savedAptMark="$(apt-mark showmanual)"; \
 	apt-get update; \
-	apt-get install -y --no-install-recommends $fetchDeps; \
+	apt-get install -y --no-install-recommends gnupg dirmngr; \
 	rm -rf /var/lib/apt/lists/*; \
 	\
 	mkdir -p /usr/src; \
 	cd /usr/src; \
 	\
-	wget -O php.tar.xz "$PHP_URL"; \
+	curl -fsSL -o php.tar.xz "$PHP_URL"; \
 	\
 	if [ -n "$PHP_SHA256" ]; then \
 		echo "$PHP_SHA256 *php.tar.xz" | sha256sum -c -; \
@@ -92,18 +87,20 @@ RUN set -xe; \
 	fi; \
 	\
 	if [ -n "$PHP_ASC_URL" ]; then \
-		wget -O php.tar.xz.asc "$PHP_ASC_URL"; \
+		curl -fsSL -o php.tar.xz.asc "$PHP_ASC_URL"; \
 		export GNUPGHOME="$(mktemp -d)"; \
 		echo "disable-ipv6" >> "$GNUPGHOME/dirmngr.conf" ; \
 		for key in $GPG_KEYS; do \
 			gpg --batch --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; \
 		done; \
 		gpg --batch --verify php.tar.xz.asc php.tar.xz; \
-		command -v gpgconf > /dev/null && gpgconf --kill all; \
+		gpgconf --kill all; \
 		rm -rf "$GNUPGHOME"; \
 	fi; \
 	\
-	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false $fetchDeps
+	apt-mark auto '.*' > /dev/null; \
+	apt-mark manual $savedAptMark > /dev/null; \
+	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
 
 COPY docker-php-source /usr/local/bin/
 
@@ -114,6 +111,7 @@ RUN set -eux; \
 	apt-get install -y --no-install-recommends \
 		libcurl4-openssl-dev \
 		libedit-dev \
+		libonig-dev \
 		libsqlite3-dev \
 		libssl1.0-dev \
 		libxml2-dev \
@@ -190,11 +188,11 @@ RUN set -eux; \
 	; \
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false; \
 	\
-	php --version; \
-	\
-# https://github.com/docker-library/php/issues/443
+# update pecl channel definitions https://github.com/docker-library/php/issues/443
 	pecl update-channels; \
-	rm -rf /tmp/pear ~/.pearrc
+	rm -rf /tmp/pear ~/.pearrc; \
+# smoke test
+	php --version
 
 COPY docker-php-ext-* docker-php-entrypoint /usr/local/bin/
 
