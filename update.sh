@@ -216,9 +216,10 @@ for version in "${versions[@]}"; do
 				# php 5.x does not build with openssl 1.1
 				sed -ri 's/libssl-dev/libssl1.0-dev/' "$version/$suite/$variant/Dockerfile"
 			fi
-			if [ "$majorVersion" -lt '7' -a "$suite" = 'buster' ]; then
-				# buster does not ship with openssl 1.0 any more so remove it
+			if [ "$majorVersion" -lt '7' -a "$suite" != 'stretch' ]; then
+				# debian buster and alpine do not ship with openssl 1.0 any more so remove it
 				sed -ri \
+					-e '/\sopenssl-dev/d' \
 					-e '/libssl-dev/d' \
 					-e '/--with-openssl/d' \
 					"$version/$suite/$variant/Dockerfile"
