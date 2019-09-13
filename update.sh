@@ -206,6 +206,12 @@ for version in "${versions[@]}"; do
 					-e '/freetype-config/d' \
 					"$version/$suite/$variant/Dockerfile"
 			fi
+			if [[ "$suite" == alpine* ]] && { [ "$majorVersion" -lt '7' ] || { [ "$majorVersion" = '7' ] && [ "$minorVersion" -lt '4' ]; }; }; then
+				# https://github.com/docker-library/php/issues/888
+				sed -ri \
+					-e '/linux-headers/d' \
+					"$version/$suite/$variant/Dockerfile"
+			fi
 			if [ "$majorVersion" -lt '7' -a "$suite" = 'stretch' ]; then
 				# php 5.x does not build with openssl 1.1
 				sed -ri 's/libssl-dev/libssl1.0-dev/' "$version/$suite/$variant/Dockerfile"
