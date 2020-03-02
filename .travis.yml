@@ -5,9 +5,6 @@ env:
   - VERSION=5.6 VARIANT=buster/cli
   - VERSION=5.6 VARIANT=buster/apache
   - VERSION=5.6 VARIANT=buster/fpm
-  - VERSION=5.6 VARIANT=stretch/cli
-  - VERSION=5.6 VARIANT=stretch/apache
-  - VERSION=5.6 VARIANT=stretch/fpm
   - VERSION=5.6 VARIANT=alpine3.11/cli
   - VERSION=5.6 VARIANT=alpine3.11/fpm
 
