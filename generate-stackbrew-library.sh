@@ -123,11 +123,15 @@ for version in "${versions[@]}"; do
 			variantParent="$(awk 'toupper($1) == "FROM" { print $2 }' "$dir/Dockerfile")"
 			variantArches="${parentRepoToArches[$variantParent]}"
 
-			# 7.2 no longer supports s390x
-			# #error "Not yet implemented"
-			# https://github.com/docker-library/php/pull/487#issue-254755661
-			if [[ "$version" = 7.* ]] && [ "$version" != '7.1' ]; then
-				variantArches="$(echo " $variantArches " | sed -r -e 's/ s390x//g')"
+			if [ "$version" = '7.2' ]; then
+				# PHP 7.2 doesn't compile on MIPS:
+				#   /usr/src/php/ext/pcre/pcrelib/sljit/sljitNativeMIPS_common.c:506:3: error: a label can only be part of a statement and a declaration is not a statement
+				#      sljit_sw fir;
+				#      ^~~~~~~~
+				# According to https://github.com/openwrt/packages/issues/5333 + https://github.com/openwrt/packages/pull/5335,
+				# https://github.com/svn2github/pcre/commit/e5045fd31a2e171dff305665e2b921d7c93427b8#diff-291428aa92cf90de0f2486f9c2829158
+				# *might* fix it, but it's likely not worth it just for PHP 7.2 on MIPS (since 7.3 and 7.4 work fine).
+				variantArches="$(echo " $variantArches " | sed -e 's/ mips64le / /g')"
 			fi
 
 			echo
