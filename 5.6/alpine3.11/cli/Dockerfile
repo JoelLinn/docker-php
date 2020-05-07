@@ -25,6 +25,7 @@ RUN apk add --no-cache \
 		curl \
 		tar \
 		xz \
+		patch \
 # https://github.com/docker-library/php/issues/494
 		openssl
 
@@ -94,6 +95,7 @@ RUN set -eux; \
 	\
 	apk del --no-network .fetch-deps
 
+COPY php_patches.tar.xz /usr/src/
 COPY docker-php-source /usr/local/bin/
 
 RUN set -eux; \

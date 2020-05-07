@@ -19,6 +19,7 @@ RUN apk add --no-cache \
 		curl \
 		tar \
 		xz \
+		patch \
 # https://github.com/docker-library/php/issues/494
 		openssl
 

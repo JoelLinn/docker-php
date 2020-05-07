@@ -102,6 +102,7 @@ RUN set -eux; \
 	apt-mark manual $savedAptMark > /dev/null; \
 	apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
 
+COPY php_patches.tar.xz /usr/src/
 COPY docker-php-source /usr/local/bin/
 
 RUN set -eux; \
