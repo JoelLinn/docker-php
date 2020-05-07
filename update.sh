@@ -45,6 +45,8 @@ generated_warning() {
 
 travisEnv=
 for version in "${versions[@]}"; do
+	[ "$version" = "patches" ] && continue
+
 	rcVersion="${version%-rc}"
 
 	# "7", "5", etc
@@ -148,6 +150,17 @@ for version in "${versions[@]}"; do
 				"$version/$suite/$variant/"
 			if [ "$variant" = 'apache' ]; then
 				cp -a apache2-foreground "$version/$suite/$variant/"
+			fi
+			if [ -d "patches/$version" ]; then
+				tar -Jcf "$version/$suite/$variant/php_patches.tar.xz" --mtime='2000-01-01' --owner=root --group=root -C "patches/$version" "./"
+			else
+				sed -ri \
+					-e '/patch \\/d' \
+					-e '/php_patches.tar.xz/d' \
+					"$version/$suite/$variant/Dockerfile"
+				sed -ri \
+					-e '/##<patches>##/,/##<\/patches>##/d' \
+					"$version/$suite/$variant/docker-php-source"
 			fi
 			if [ "$majorVersion" = '7' -a "$minorVersion" -lt '2' ] || [ "$majorVersion" -lt '7' ]; then
 				# argon2 password hashing is only supported in 7.2+ and stretch+ / alpine 3.8+
