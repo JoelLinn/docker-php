@@ -34,4 +34,8 @@ CVE-2020-7064.patch
 CVE-2020-7067.patch
 CVE-2020-7066.patch
 
+CVE-2019-11048-1.patch
+CVE-2019-11048-2.patch
+not-cve-but-bug-CVE-2019-18218.patch
+
 9999-version-joellinn.patch
