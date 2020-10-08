@@ -78,7 +78,14 @@ for version; do
 		fi
 
 		if [ "$hasPatches" = true ]; then
-			tar -Jcf "$version/$suite/$variant/php_patches.tar.xz" --mtime='2000-01-01' --owner=root --group=root -C "patches/$version" "./"
+			tar -Jcf "$version/$suite/$variant/php_patches.tar.xz" \
+				--format=gnu \
+				--mode=755 \
+				--mtime='2000-01-01' \
+				--numeric-owner --owner=0 --group=0 \
+				--sort=name \
+				-C "patches/$version" \
+				"./"
 		else
 			sed -ri \
 				-e '/##<patches>##/,/##<\/patches>##/d' \
