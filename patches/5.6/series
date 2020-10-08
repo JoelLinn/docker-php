@@ -38,4 +38,6 @@ CVE-2019-11048-1.patch
 CVE-2019-11048-2.patch
 not-cve-but-bug-CVE-2019-18218.patch
 
+CVE-2020-7068.patch
+
 9999-version-joellinn.patch
