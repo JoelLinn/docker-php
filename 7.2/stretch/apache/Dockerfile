@@ -147,7 +147,6 @@ RUN set -eux; \
 	if [ -n "$PHP_ASC_URL" ]; then \
 		curl -fsSL -o php.tar.xz.asc "$PHP_ASC_URL"; \
 		export GNUPGHOME="$(mktemp -d)"; \
-		echo "disable-ipv6" >> "$GNUPGHOME/dirmngr.conf" ; \
 		for key in $GPG_KEYS; do \
 			gpg --batch --keyserver ha.pool.sks-keyservers.net --recv-keys "$key"; \
 		done; \
