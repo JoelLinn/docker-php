@@ -57,8 +57,7 @@ for version in "${versions[@]}"; do
 				|
 					"https://www.php.net/distributions/" + .filename,
 					"https://www.php.net/distributions/" + .filename + ".asc",
-					.sha256 // "",
-					.md5 // ""
+					.sha256 // ""
 			) ]
 		'
 	else
@@ -70,8 +69,7 @@ for version in "${versions[@]}"; do
 				.version,
 				.files.xz.path // "",
 				"",
-				.files.xz.sha256 // "",
-				.files.xz.md5 // ""
+				.files.xz.sha256 // ""
 			]
 		'
 	fi
@@ -90,14 +88,13 @@ for version in "${versions[@]}"; do
 		exit 1
 	fi
 
-	# format of "possibles" array entries is "VERSION URL.TAR.XZ URL.TAR.XZ.ASC SHA256 MD5" (each value shell quoted)
+	# format of "possibles" array entries is "VERSION URL.TAR.XZ URL.TAR.XZ.ASC SHA256" (each value shell quoted)
 	#   see the "apiJqExpr" values above for more details
 	eval "possi=( ${possibles[0]} )"
 	fullVersion="${possi[0]}"
 	url="${possi[1]}"
 	ascUrl="${possi[2]}"
 	sha256="${possi[3]}"
-	md5="${possi[4]}"
 
 	gpgKey="${gpgKeys[$rcVersion]:-}"
 	if [ -z "$gpgKey" ]; then
@@ -134,7 +131,7 @@ for version in "${versions[@]}"; do
 
 	echo "$version: $fullVersion"
 
-	export fullVersion url ascUrl sha256 md5 gpgKey
+	export fullVersion url ascUrl sha256 gpgKey
 	json="$(
 		jq <<<"$json" -c \
 			--argjson variants "$variants" \
