@@ -44,4 +44,8 @@ CVE-2020-7070.patch
 
 CVE-2020-7071.patch
 
+CVE-2021-21702-alt-fix-bug-77423.patch
+CVE-2021-21702-fix-bug-80672-null-deref-SoapClient.patch
+CVE-2021-21702-fix-build.patch
+
 9999-version-joellinn.patch
