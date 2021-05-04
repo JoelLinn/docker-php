@@ -12,10 +12,10 @@
     "version": "5.6.40"
   },
   "7.3": {
-    "ascUrl": "https://www.php.net/distributions/php-7.3.27.tar.xz.asc",
+    "ascUrl": "https://www.php.net/distributions/php-7.3.28.tar.xz.asc",
     "gpgKeys": "CBAF69F173A0FEA4B537F470D66C9593118BCCB6 F38252826ACD957EF380D39F2F7956BC5DA04B5D",
-    "sha256": "65f616e2d5b6faacedf62830fa047951b0136d5da34ae59e6744cbaf5dca148d",
-    "url": "https://www.php.net/distributions/php-7.3.27.tar.xz",
+    "sha256": "a2a84dbec8c1eee3f46c5f249eaaa2ecb3f9e7a6f5d0604d2df44ff8d4904dbe",
+    "url": "https://www.php.net/distributions/php-7.3.28.tar.xz",
     "variants": [
       "buster/cli",
       "buster/apache",
@@ -32,13 +32,13 @@
       "alpine3.12/fpm",
       "alpine3.12/zts"
     ],
-    "version": "7.3.27"
+    "version": "7.3.28"
   },
   "7.4": {
-    "ascUrl": "https://www.php.net/distributions/php-7.4.15.tar.xz.asc",
+    "ascUrl": "https://www.php.net/distributions/php-7.4.18.tar.xz.asc",
     "gpgKeys": "42670A7FE4D0441C8E4632349E4FDC074A4EF02D 5A52880781F755608BF815FC910DEB46F53EA312",
-    "sha256": "9b859c65f0cf7b3eff9d4a28cfab719fb3d36a1db3c20d874a79b5ec44d43cb8",
-    "url": "https://www.php.net/distributions/php-7.4.15.tar.xz",
+    "sha256": "ab97f22b128d21dcbc009b50a37aaea0051b2721cbcd122d9e00e6ffc3c4b7e1",
+    "url": "https://www.php.net/distributions/php-7.4.18.tar.xz",
     "variants": [
       "buster/cli",
       "buster/apache",
@@ -51,13 +51,13 @@
       "alpine3.12/fpm",
       "alpine3.12/zts"
     ],
-    "version": "7.4.15"
+    "version": "7.4.18"
   },
   "8.0": {
-    "ascUrl": "https://www.php.net/distributions/php-8.0.2.tar.xz.asc?a=1",
+    "ascUrl": "https://www.php.net/distributions/php-8.0.5.tar.xz.asc",
     "gpgKeys": "1729F83938DA44E27BA0F4D3DBDB397470D12172 BFDDD28642824F8118EF77909B67A5C12229118F",
-    "sha256": "84dd6e36f48c3a71ff5dceba375c1f6b34b71d4fa9e06b720780127176468ccc",
-    "url": "https://www.php.net/distributions/php-8.0.2.tar.xz?a=1",
+    "sha256": "5dd358b35ecd5890a4f09fb68035a72fe6b45d3ead6999ea95981a107fd1f2ab",
+    "url": "https://www.php.net/distributions/php-8.0.5.tar.xz",
     "variants": [
       "buster/cli",
       "buster/apache",
@@ -68,6 +68,6 @@
       "alpine3.12/cli",
       "alpine3.12/fpm"
     ],
-    "version": "8.0.2"
+    "version": "8.0.5"
   }
 }
