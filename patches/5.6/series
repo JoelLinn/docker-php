@@ -48,4 +48,6 @@ CVE-2021-21702-alt-fix-bug-77423.patch
 CVE-2021-21702-fix-bug-80672-null-deref-SoapClient.patch
 CVE-2021-21702-fix-build.patch
 
+Fix-80710-imap_mail_compose-header-injection.patch
+
 9999-version-joellinn.patch
