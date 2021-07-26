@@ -3,6 +3,11 @@ set -Eeuo pipefail
 
 # https://www.php.net/gpg-keys.php
 declare -A gpgKeys=(
+	# https://wiki.php.net/todo/php81
+	# krakjoe & ramsey & patrickallaert
+	# https://www.php.net/gpg-keys.php#gpg-8.1
+	[8.1]='528995BFEDFBA7191D46839EF9BA0ADA31CBD89E 39B641343D8C104B2B146DC3F9C39DC0B9698544 F1F692238FBC1666E5A5CCD4199F9DFEF6FFBAFD'
+
 	# https://wiki.php.net/todo/php80
 	# pollita & carusogabriel
 	# https://www.php.net/gpg-keys.php#gpg-8.0
@@ -99,7 +104,7 @@ for version in "${versions[@]}"; do
 	gpgKey="${gpgKeys[$rcVersion]:-}"
 	if [ -z "$gpgKey" ]; then
 		echo >&2 "ERROR: missing GPG key fingerprint for $version"
-		echo >&2 "  try looking on https://www.php.net/downloads.php#gpg-$version"
+		echo >&2 "  try looking on https://www.php.net/downloads.php#gpg-$rcVersion"
 		echo >&2 "  (and update 'gpgKeys' array in '$BASH_SOURCE')"
 		exit 1
 	fi
@@ -119,8 +124,8 @@ for version in "${versions[@]}"; do
 	for suite in \
 		buster \
 		stretch \
+		alpine3.14 \
 		alpine3.13 \
-		alpine3.12 \
 	; do
 		for variant in cli apache fpm zts; do
 			[ -d "$version/$suite/$variant" ] || continue
@@ -130,12 +135,6 @@ for version in "${versions[@]}"; do
 	done
 
 	echo "$version: $fullVersion"
-
-	if [ "$fullVersion" = '8.0.2' ]; then
-		# https://bugs.php.net/bug.php?id=80711#1612456954 😬
-		url+='?a=1'
-		ascUrl+='?a=1'
-	fi
 
 	export fullVersion url ascUrl sha256 gpgKey
 	json="$(
