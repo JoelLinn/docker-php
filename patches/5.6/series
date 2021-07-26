@@ -50,4 +50,6 @@ CVE-2021-21702-fix-build.patch
 
 Fix-80710-imap_mail_compose-header-injection.patch
 
+CVE-2021-21705-fix-bug-81122-SSRF-bypass.patch
+
 9999-version-joellinn.patch
