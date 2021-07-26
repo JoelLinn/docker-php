@@ -1,0 +1,160 @@
+From 45aa6a4e6a49b0d4ff19e42b36cb8467191c8f98 Mon Sep 17 00:00:00 2001
+From: Joel Linn <jl@conductive.de>
+Date: Mon, 26 Jul 2021 12:41:18 +0200
+Subject: [PATCH] Disable firebird
+
+---
+ ext/interbase/config.m4     | 37 +----------------------------
+ ext/interbase/config.w32    | 12 +---------
+ ext/pdo_firebird/config.m4  | 47 +------------------------------------
+ ext/pdo_firebird/config.w32 | 13 +---------
+ 4 files changed, 4 insertions(+), 105 deletions(-)
+
+diff --git a/ext/interbase/config.m4 b/ext/interbase/config.m4
+index 6aa1b368c0..989e723f8b 100644
+--- a/ext/interbase/config.m4
++++ b/ext/interbase/config.m4
+@@ -3,40 +3,5 @@ PHP_ARG_WITH(interbase,for InterBase support,
+                           install directory [/usr/interbase]])
+ 
+ if test "$PHP_INTERBASE" != "no"; then
+-  if test "$PHP_INTERBASE" = "yes"; then
+-    IBASE_INCDIR=/usr/interbase/include
+-    IBASE_LIBDIR=/usr/interbase/lib
+-  else
+-    IBASE_INCDIR=$PHP_INTERBASE/include
+-    IBASE_LIBDIR=$PHP_INTERBASE/$PHP_LIBDIR
+-  fi
+-
+-  PHP_CHECK_LIBRARY(fbclient, isc_detach_database,
+-  [
+-    IBASE_LIBNAME=fbclient
+-  ], [
+-    PHP_CHECK_LIBRARY(gds, isc_detach_database,
+-    [
+-      IBASE_LIBNAME=gds
+-    ], [
+-      PHP_CHECK_LIBRARY(ib_util, isc_detach_database,
+-      [
+-        IBASE_LIBNAME=ib_util
+-      ], [
+-        AC_MSG_ERROR([libgds, libib_util or libfbclient not found! Check config.log for more information.])
+-      ], [
+-        -L$IBASE_LIBDIR
+-      ])
+-    ], [
+-      -L$IBASE_LIBDIR
+-    ])
+-  ], [
+-    -L$IBASE_LIBDIR
+-  ])
+-  
+-  PHP_ADD_LIBRARY_WITH_PATH($IBASE_LIBNAME, $IBASE_LIBDIR, INTERBASE_SHARED_LIBADD)
+-  PHP_ADD_INCLUDE($IBASE_INCDIR)
+-  AC_DEFINE(HAVE_IBASE,1,[ ])
+-  PHP_NEW_EXTENSION(interbase, interbase.c ibase_query.c ibase_service.c ibase_events.c ibase_blobs.c, $ext_shared)
+-  PHP_SUBST(INTERBASE_SHARED_LIBADD)
++  AC_MSG_ERROR([interbase not enabled; non-backported CVEs])
+ fi
+diff --git a/ext/interbase/config.w32 b/ext/interbase/config.w32
+index 89cd67219c..11904acf64 100644
+--- a/ext/interbase/config.w32
++++ b/ext/interbase/config.w32
+@@ -3,15 +3,5 @@
+ ARG_WITH("interbase", "InterBase support", "no");
+ 
+ if (PHP_INTERBASE != "no") {
+-
+-	if (CHECK_HEADER_ADD_INCLUDE("ibase.h", "CFLAGS_INTERBASE", 
+-				PHP_PHP_BUILD + "\\include\\interbase;" + PHP_PHP_BUILD + "\\interbase\\include;" + PHP_INTERBASE) &&
+-			(CHECK_LIB("fbclient_ms.lib", "interbase", PHP_PHP_BUILD + "\\interbase\\lib_ms;" + PHP_INTERBASE) ||
+-			 CHECK_LIB("gds32_ms.lib", "interbase", PHP_PHP_BUILD + "\\interbase\\lib_ms;" + PHP_INTERBASE))) {
+-
+-		EXTENSION("interbase", "interbase.c ibase_query.c ibase_service.c ibase_events.c ibase_blobs.c");
+-		AC_DEFINE('HAVE_IBASE', 1, 'Have interbase library');
+-	} else {
+-		WARNING("interbase not enabled; libraries and headers not found");
+-	}
++	WARNING("interbase not enabled; non-backported CVEs");
+ }
+diff --git a/ext/pdo_firebird/config.m4 b/ext/pdo_firebird/config.m4
+index f9188a09b7..17f005d262 100644
+--- a/ext/pdo_firebird/config.m4
++++ b/ext/pdo_firebird/config.m4
+@@ -3,50 +3,5 @@ PHP_ARG_WITH(pdo-firebird,for Firebird support for PDO,
+                           install directory [/opt/firebird]])
+ 
+ if test "$PHP_PDO_FIREBIRD" != "no"; then
+-
+-  if test "$PHP_PDO" = "no" && test "$ext_shared" = "no"; then
+-    AC_MSG_ERROR([PDO is not enabled! Add --enable-pdo to your configure line.])
+-  fi
+-
+-  if test "$PHP_PDO_FIREBIRD" = "yes"; then
+-    FIREBIRD_INCDIR=
+-    FIREBIRD_LIBDIR=
+-    FIREBIRD_LIBDIR_FLAG=
+-  else
+-    FIREBIRD_INCDIR=$PHP_PDO_FIREBIRD/include
+-    FIREBIRD_LIBDIR=$PHP_PDO_FIREBIRD/$PHP_LIBDIR
+-    FIREBIRD_LIBDIR_FLAG=-L$FIREBIRD_LIBDIR
+-  fi
+-
+-  PHP_CHECK_LIBRARY(fbclient, isc_detach_database,
+-  [
+-    FIREBIRD_LIBNAME=fbclient
+-  ], [
+-    PHP_CHECK_LIBRARY(gds, isc_detach_database,
+-    [
+-      FIREBIRD_LIBNAME=gds
+-    ], [
+-      PHP_CHECK_LIBRARY(ib_util, isc_detach_database,
+-      [
+-        FIREBIRD_LIBNAME=ib_util
+-      ], [
+-        AC_MSG_ERROR([libfbclient, libgds or libib_util not found! Check config.log for more information.])
+-      ], [
+-        $FIREBIRD_LIBDIR_FLAG
+-      ])
+-    ], [
+-      $FIREBIRD_LIBDIR_FLAG
+-    ])
+-  ], [
+-    $FIREBIRD_LIBDIR_FLAG
+-  ])
+- 
+-  PHP_CHECK_PDO_INCLUDES
+-
+-  PHP_ADD_LIBRARY_WITH_PATH($FIREBIRD_LIBNAME, $FIREBIRD_LIBDIR, PDO_FIREBIRD_SHARED_LIBADD)
+-  PHP_ADD_INCLUDE($FIREBIRD_INCDIR)
+-  AC_DEFINE(HAVE_PDO_FIREBIRD,1,[ ])
+-  PHP_NEW_EXTENSION(pdo_firebird, pdo_firebird.c firebird_driver.c firebird_statement.c, $ext_shared,,-I$pdo_cv_inc_path)
+-  PHP_SUBST(PDO_FIREBIRD_SHARED_LIBADD)
+-  PHP_ADD_EXTENSION_DEP(pdo_firebird, pdo)
++  AC_MSG_ERROR([interbase not enabled; non-backported CVEs])
+ fi
+diff --git a/ext/pdo_firebird/config.w32 b/ext/pdo_firebird/config.w32
+index dc3ea0d17e..56cc420d3b 100644
+--- a/ext/pdo_firebird/config.w32
++++ b/ext/pdo_firebird/config.w32
+@@ -3,16 +3,5 @@
+ ARG_WITH("pdo-firebird", "Firebird support for PDO", "no");
+ 
+ if (PHP_PDO_FIREBIRD != "no") {
+-
+-	if ((CHECK_LIB("fbclient_ms.lib", "pdo_firebird", PHP_PHP_BUILD + "\\interbase\\lib_ms;" + PHP_PDO_FIREBIRD)
+-			|| CHECK_LIB("gds32_ms.lib", "pdo_firebird", PHP_PHP_BUILD + "\\interbase\\lib_ms;" + PHP_PDO_FIREBIRD)
+-		) && CHECK_HEADER_ADD_INCLUDE("ibase.h", "CFLAGS_PDO_FIREBIRD", 
+-				PHP_PHP_BUILD + "\\include\\interbase;" + PHP_PHP_BUILD + "\\interbase\\include;" + PHP_PDO_FIREBIRD)
+-		) {
+-
+-		EXTENSION("pdo_firebird", "pdo_firebird.c firebird_driver.c firebird_statement.c");
+-	} else {
+-		WARNING("pdo_firebird not enabled; libraries and headers not found");
+-	}
+-	ADD_EXTENSION_DEP('pdo_firebird', 'pdo');
++	WARNING("interbase not enabled; non-backported CVEs");
+ }
+-- 
+2.30.2
+
