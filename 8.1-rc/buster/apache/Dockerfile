@@ -121,9 +121,9 @@ ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 
 ENV GPG_KEYS 528995BFEDFBA7191D46839EF9BA0ADA31CBD89E 39B641343D8C104B2B146DC3F9C39DC0B9698544 F1F692238FBC1666E5A5CCD4199F9DFEF6FFBAFD
 
-ENV PHP_VERSION 8.1.0beta1
-ENV PHP_URL="https://downloads.php.net/~ramsey/php-8.1.0beta1.tar.xz" PHP_ASC_URL="https://downloads.php.net/~ramsey/php-8.1.0beta1.tar.xz.asc"
-ENV PHP_SHA256="e2b0e50750544754e48dbee298637566f335874b470d5d5a62470bfc70eefe28"
+ENV PHP_VERSION 8.1.0beta3
+ENV PHP_URL="https://downloads.php.net/~ramsey/php-8.1.0beta3.tar.xz" PHP_ASC_URL="https://downloads.php.net/~ramsey/php-8.1.0beta3.tar.xz.asc"
+ENV PHP_SHA256="17fb5595058922982f6033f54c9b04693c2791b4e7239cb15ddf96ac5685b87f"
 
 RUN set -eux; \
 	\
@@ -226,7 +226,7 @@ RUN set -eux; \
 		--with-pear \
 		\
 # bundled pcre does not support JIT on s390x
-# https://manpages.debian.org/stretch/libpcre3-dev/pcrejit.3.en.html#AVAILABILITY_OF_JIT_SUPPORT
+# https://manpages.debian.org/bullseye/libpcre3-dev/pcrejit.3.en.html#AVAILABILITY_OF_JIT_SUPPORT
 		$(test "$gnuArch" = 's390x-linux-gnu' && echo '--without-pcre-jit') \
 		--with-libdir="lib/$debMultiarch" \
 		\
