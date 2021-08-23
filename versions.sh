@@ -128,6 +128,14 @@ for version in "${versions[@]}"; do
 		alpine3.13 \
 	; do
 		for variant in cli apache fpm zts; do
+			if [ "$rcVersion" = '5.6' ]; then
+				if [ "$suite" != 'bullseye' ] && [ "$suite" != 'buster' ]; then
+					continue
+				fi
+				if [ "$variant" = 'zts' ]; then
+					continue
+				fi
+			fi
 			if [[ "$suite" = alpine* ]]; then
 				if [ "$variant" = 'apache' ]; then
 					continue
