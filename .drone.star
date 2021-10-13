@@ -11,7 +11,7 @@ def main(ctx):
             'image': 'ubuntu:focal',
             'commands': [
                 'DEBIAN_FRONTEND=noninteractive apt-get update',
-                'DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends curl gawk git jq wget xz-utils',
+                'DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends ca-certificates curl gawk git jq wget xz-utils',
                 './apply-templates.sh',
                 '''
                 status="$(git status --short)"
