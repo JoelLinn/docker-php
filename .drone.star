@@ -57,4 +57,5 @@ def step_image(version, base, variant):
             'username': {'from_secret': 'docker_username'},
             'password': {'from_secret': 'docker_password'},
         },
+        'depends_on': ['verify'],
     }
