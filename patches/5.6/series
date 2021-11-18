@@ -55,6 +55,7 @@ CVE-2021-21705-fix-bug-81122-SSRF-bypass.patch
 Disable-firebird.patch
 
 0182-Fix-81211-Symlinks-are-followed-when-creating-PHAR-a.patch
-0185-Fix-81420-ZipArchive-extractTo-extracts-outside-of-d.patch
+0185-Fix-bug-81026-PHP-FPM-oob-R-W-in-root-process-leadin.patch
+0187-Fix-81420-ZipArchive-extractTo-extracts-outside-of-d.patch
 
 9999-version-joellinn.patch
