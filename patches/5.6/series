@@ -58,4 +58,7 @@ Disable-firebird.patch
 0185-Fix-bug-81026-PHP-FPM-oob-R-W-in-root-process-leadin.patch
 0187-Fix-81420-ZipArchive-extractTo-extracts-outside-of-d.patch
 
+0189-Fix-79971-special-character-is-breaking-the-path-in-.patch
+0192-fix-ZTS.patch
+
 9999-version-joellinn.patch
