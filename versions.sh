@@ -124,8 +124,8 @@ for version in "${versions[@]}"; do
 	for suite in \
 		bullseye \
 		buster \
+		alpine3.15 \
 		alpine3.14 \
-		alpine3.13 \
 	; do
 		for variant in cli apache fpm zts; do
 			if [ "$rcVersion" = '5.6' ]; then
