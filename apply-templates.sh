@@ -30,6 +30,13 @@ generated_warning() {
 for version; do
 	export version
 
+	rm -rf "$version"
+
+	if jq -e '.[env.version] | not' versions.json > /dev/null; then
+		echo "deleting $version ..."
+		continue
+	fi
+
 	[ -d "patches/$version" ] && hasPatches="true" || hasPatches="false"
 	export hasPatches
 

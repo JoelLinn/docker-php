@@ -160,7 +160,50 @@ ENV PHP_CFLAGS="-fstack-protector-strong -fpic -fpie -O2 -D_LARGEFILE_SOURCE -D_
 ENV PHP_CPPFLAGS="$PHP_CFLAGS"
 ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 
-ENV GPG_KEYS {{ .gpgKeys }}
+ENV GPG_KEYS {{
+	{
+		# https://www.php.net/gpg-keys.php
+		# https://www.php.net/downloads.php
+
+		"8.2": [
+			# https://wiki.php.net/todo/php82#release_managers
+			# https://www.php.net/gpg-keys.php#gpg-8.2
+			"39B6 4134 3D8C 104B 2B14  6DC3 F9C3 9DC0 B969 8544", # ramsey
+			"E609 13E4 DF20 9907 D8E3  0D96 659A 97C9 CF2A 795A", # sergey
+			"1198 C011 7593 497A 5EC5  C199 286A F1F9 8974 69DC"  # pierrick
+		],
+
+		"8.1": [
+			# https://wiki.php.net/todo/php81#release_managers
+			# https://www.php.net/gpg-keys.php#gpg-8.1
+			"5289 95BF EDFB A719 1D46  839E F9BA 0ADA 31CB D89E", # krakjoe
+			"39B6 4134 3D8C 104B 2B14  6DC3 F9C3 9DC0 B969 8544", # ramsey
+			"F1F6 9223 8FBC 1666 E5A5  CCD4 199F 9DFE F6FF BAFD"  # patrickallaert
+		],
+
+		"8.0": [
+			# https://wiki.php.net/todo/php80#release_managers
+			# https://www.php.net/gpg-keys.php#gpg-8.0
+			"1729 F839 38DA 44E2 7BA0  F4D3 DBDB 3974 70D1 2172", # pollita
+			"BFDD D286 4282 4F81 18EF  7790 9B67 A5C1 2229 118F"  # carusogabriel
+		],
+
+		"7.4": [
+			# https://wiki.php.net/todo/php74#release_managers
+			# https://www.php.net/gpg-keys.php#gpg-7.4
+			"4267 0A7F E4D0 441C 8E46  3234 9E4F DC07 4A4E F02D", # petk
+			"5A52 8807 81F7 5560 8BF8  15FC 910D EB46 F53E A312"  # derick
+		],
+
+		"5.6": [
+			# https://www.php.net/gpg-keys.php#gpg-5.6
+			"6E4F 6AB3 21FD C07F 2C33  2E3A C2BF 0BC4 33CF C8B3",
+			"0BD7 8B5F 9750 0D45 0838  F95D FE85 7D9A 90D9 0EC1"
+		],
+	}[env.version | rtrimstr("-rc")] // error("missing GPG keys for " + env.version)
+	| map(gsub(" "; ""))
+	| join(" ")
+}}
 
 ENV PHP_VERSION {{ .version }}
 ENV PHP_URL="{{ .url }}" PHP_ASC_URL="{{ .ascUrl // "" }}"
@@ -227,6 +270,7 @@ RUN set -eux; \
 			if (.version | version_id) >= ("7.2" | version_id) then "argon2-dev" else empty end,
 			"coreutils",
 			"curl-dev",
+			"gnu-libiconv-dev", # https://www.php.net/manual/en/intro.iconv.php "it'd be a good idea to install the GNU libiconv library"
 			if (.version | version_id) >= ("7.2" | version_id) then  "libsodium-dev" else empty end,
 			"libxml2-dev",
 			if (.version | version_id) >= ("7.2" | version_id) then "openssl-dev" else empty end,
@@ -258,6 +302,15 @@ RUN set -eux; \
 -}}
 	; \
 	\
+{{ if is_alpine then ( -}}
+# make sure musl's iconv doesn't get used (https://www.php.net/manual/en/intro.iconv.php)
+	rm -vf /usr/include/iconv.h; \
+{{ if (.version | version_id) < ("8" | version_id) then ( -}}
+# PHP < 8 doesn't know to look deeper for GNU libiconv: https://github.com/php/php-src/commit/b480e6841ecd5317faa136647a2b8253a4c2d0df
+	ln -sv /usr/include/gnu-libiconv/*.h /usr/include/; \
+{{ ) else "" end -}}
+	\
+{{ ) else "" end -}}
 	export \
 		CFLAGS="$PHP_CFLAGS" \
 		CPPFLAGS="$PHP_CPPFLAGS" \
@@ -304,11 +357,21 @@ RUN set -eux; \
 		--with-sqlite3=/usr \
 		\
 		--with-curl \
+		--with-iconv{{ if is_alpine then "=/usr" else "" end }} \
 {{ if (.version | version_id) >= ("7.2" | version_id) then ( -}}
 		--with-openssl \
 {{ ) else "" end -}}
 		--with-readline \
 		--with-zlib \
+		\
+{{ if env.variant == "cli" then ( -}}
+# https://github.com/docker-library/php/pull/1259
+		--enable-phpdbg \
+		--enable-phpdbg-readline \
+{{ ) else ( -}}
+# https://github.com/bwoebi/phpdbg-docs/issues/1#issuecomment-163872806 ("phpdbg is primarily a CLI debugger, and is not suitable for debugging an fpm stack.")
+		--disable-phpdbg \
+{{ ) end -}}
 		\
 {{ if (.version | version_id) >= ("7.4" | version_id) then ( -}}
 # in PHP 7.4+, the pecl/pear installers are officially deprecated (requiring an explicit "--with-pear")
@@ -450,9 +513,7 @@ RUN set -eux; \
 	{ \
 		echo '[global]'; \
 		echo 'error_log = /proc/self/fd/2'; \
-{{ if (.version | version_id) >= ("7.3" | version_id) then ( -}}
 		echo; echo '; https://github.com/docker-library/php/pull/725#issuecomment-443540114'; echo 'log_limit = 8192'; \
-{{ ) else "" end -}}
 		echo; \
 		echo '[www]'; \
 		echo '; if we send this to /proc/self/fd/1, it never appears'; \
@@ -462,9 +523,7 @@ RUN set -eux; \
 		echo; \
 		echo '; Ensure worker stdout and stderr are sent to the main error log.'; \
 		echo 'catch_workers_output = yes'; \
-{{ if (.version | version_id) >= ("7.3" | version_id) then ( -}}
 		echo 'decorate_workers_output = no'; \
-{{ ) else "" end -}}
 	} | tee php-fpm.d/docker.conf; \
 	{ \
 		echo '[global]'; \

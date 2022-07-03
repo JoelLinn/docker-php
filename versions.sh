@@ -1,39 +1,6 @@
 #!/usr/bin/env bash
 set -Eeuo pipefail
 
-# https://www.php.net/gpg-keys.php
-declare -A gpgKeys=(
-	# https://wiki.php.net/todo/php81
-	# krakjoe & ramsey & patrickallaert
-	# https://www.php.net/gpg-keys.php#gpg-8.1
-	[8.1]='528995BFEDFBA7191D46839EF9BA0ADA31CBD89E 39B641343D8C104B2B146DC3F9C39DC0B9698544 F1F692238FBC1666E5A5CCD4199F9DFEF6FFBAFD'
-
-	# https://wiki.php.net/todo/php80
-	# pollita & carusogabriel
-	# https://www.php.net/gpg-keys.php#gpg-8.0
-	[8.0]='1729F83938DA44E27BA0F4D3DBDB397470D12172 BFDDD28642824F8118EF77909B67A5C12229118F'
-
-	# https://wiki.php.net/todo/php74
-	# petk & derick
-	# https://www.php.net/gpg-keys.php#gpg-7.4
-	[7.4]='42670A7FE4D0441C8E4632349E4FDC074A4EF02D 5A52880781F755608BF815FC910DEB46F53EA312'
-
-	# https://wiki.php.net/todo/php73
-	# cmb & stas
-	# https://www.php.net/gpg-keys.php#gpg-7.3
-	[7.3]='CBAF69F173A0FEA4B537F470D66C9593118BCCB6 F38252826ACD957EF380D39F2F7956BC5DA04B5D'
-
-	# https://wiki.php.net/todo/php72
-	# pollita & remi
-	# https://www.php.net/downloads.php#gpg-7.2
-	# https://www.php.net/gpg-keys.php#gpg-7.2
-	[7.2]='1729F83938DA44E27BA0F4D3DBDB397470D12172 B1B44D8F021E4E2D6021E995DC9FF8D3EE5AF27F'
-
-	# https://www.php.net/gpg-keys.php#gpg-5.6
-	[5.6]='6E4F6AB321FDC07F2C332E3AC2BF0BC433CFC8B3 0BD78B5F97500D450838F95DFE857D9A90D90EC1'
-)
-# see https://www.php.net/downloads.php
-
 cd "$(dirname "$(readlink -f "$BASH_SOURCE")")"
 
 versions=( "$@" )
@@ -68,7 +35,7 @@ for version in "${versions[@]}"; do
 	else
 		apiUrl='https://qa.php.net/api.php?type=qa-releases&format=json'
 		apiJqExpr='
-			.releases[]
+			(.releases // [])[]
 			| select(.version | startswith(env.rcVersion))
 			| [
 				.version,
@@ -87,10 +54,16 @@ for version in "${versions[@]}"; do
 	unset IFS
 
 	if [ "${#possibles[@]}" -eq 0 ]; then
-		echo >&2
-		echo >&2 "error: unable to determine available releases of $version"
-		echo >&2
-		exit 1
+		if [ "$rcVersion" = "$version" ]; then
+			echo >&2
+			echo >&2 "error: unable to determine available releases of $version"
+			echo >&2
+			exit 1
+		else
+			echo >&2 "warning: skipping/removing '$version' (does not appear to exist upstream)"
+			json="$(jq <<<"$json" -c '.[env.version] = null')"
+			continue
+		fi
 	fi
 
 	# format of "possibles" array entries is "VERSION URL.TAR.XZ URL.TAR.XZ.ASC SHA256" (each value shell quoted)
@@ -100,14 +73,6 @@ for version in "${versions[@]}"; do
 	url="${possi[1]}"
 	ascUrl="${possi[2]}"
 	sha256="${possi[3]}"
-
-	gpgKey="${gpgKeys[$rcVersion]:-}"
-	if [ -z "$gpgKey" ]; then
-		echo >&2 "ERROR: missing GPG key fingerprint for $version"
-		echo >&2 "  try looking on https://www.php.net/downloads.php#gpg-$rcVersion"
-		echo >&2 "  (and update 'gpgKeys' array in '$BASH_SOURCE')"
-		exit 1
-	fi
 
 	if ! wget -q --spider "$url"; then
 		echo >&2 "error: '$url' appears to be missing"
@@ -124,8 +89,8 @@ for version in "${versions[@]}"; do
 	for suite in \
 		bullseye \
 		buster \
+		alpine3.16 \
 		alpine3.15 \
-		alpine3.14 \
 	; do
 		for variant in cli apache fpm zts; do
 			if [ "$rcVersion" = '5.6' ]; then
@@ -139,9 +104,6 @@ for version in "${versions[@]}"; do
 			if [[ "$suite" = alpine* ]]; then
 				if [ "$variant" = 'apache' ]; then
 					continue
-				elif [ "$variant" = 'zts' ] && [[ "$rcVersion" != 7.* ]]; then
-					# https://github.com/docker-library/php/issues/1074
-					continue
 				fi
 			fi
 			export suite variant
@@ -151,19 +113,24 @@ for version in "${versions[@]}"; do
 
 	echo "$version: $fullVersion"
 
-	export fullVersion url ascUrl sha256 gpgKey
+	export fullVersion url ascUrl sha256
 	json="$(
-		jq <<<"$json" -c \
-			--argjson variants "$variants" \
-			'.[env.version] = {
+		jq <<<"$json" -c --argjson variants "$variants" '
+			.[env.version] = {
 				version: env.fullVersion,
 				url: env.url,
 				ascUrl: env.ascUrl,
 				sha256: env.sha256,
-				gpgKeys: env.gpgKey,
 				variants: $variants,
-			}'
+			}
+		'
 	)"
+
+	if [ "$version" = "$rcVersion" ]; then
+		json="$(jq <<<"$json" -c '
+			.[env.version + "-rc"] //= null
+		')"
+	fi
 done
 
 jq <<<"$json" -S . > versions.json
