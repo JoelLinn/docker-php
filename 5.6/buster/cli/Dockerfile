@@ -154,7 +154,6 @@ RUN set -eux; \
 		\
 # https://github.com/docker-library/php/pull/1259
 		--enable-phpdbg \
-		--enable-phpdbg-readline \
 		\
 # bundled pcre does not support JIT on s390x
 # https://manpages.debian.org/bullseye/libpcre3-dev/pcrejit.3.en.html#AVAILABILITY_OF_JIT_SUPPORT
