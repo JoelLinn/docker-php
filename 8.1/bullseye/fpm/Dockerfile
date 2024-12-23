@@ -60,9 +60,9 @@ ENV PHP_LDFLAGS="-Wl,-O1 -pie"
 
 ENV GPG_KEYS 528995BFEDFBA7191D46839EF9BA0ADA31CBD89E 39B641343D8C104B2B146DC3F9C39DC0B9698544 F1F692238FBC1666E5A5CCD4199F9DFEF6FFBAFD
 
-ENV PHP_VERSION 8.1.7
-ENV PHP_URL="https://www.php.net/distributions/php-8.1.7.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.1.7.tar.xz.asc"
-ENV PHP_SHA256="f042322f1b5a9f7c2decb84b7086ef676896c2f7178739b9672afafa964ed0e5"
+ENV PHP_VERSION 8.1.31
+ENV PHP_URL="https://www.php.net/distributions/php-8.1.31.tar.xz" PHP_ASC_URL="https://www.php.net/distributions/php-8.1.31.tar.xz.asc"
+ENV PHP_SHA256="c4f244d46ba51c72f7d13d4f66ce6a9e9a8d6b669c51be35e01765ba58e7afca"
 
 RUN set -eux; \
 	\
@@ -243,7 +243,7 @@ RUN set -eux; \
 	{ \
 		echo '[global]'; \
 		echo 'error_log = /proc/self/fd/2'; \
-		echo; echo '; https://github.com/docker-library/php/pull/725#issuecomment-443540114'; echo 'log_limit = 8192'; \
+		echo; echo '; https://github.com/docker-library/php/pull/725#issuecomment-443540114'; echo '# log_limit = 8192'; \
 		echo; \
 		echo '[www]'; \
 		echo '; if we send this to /proc/self/fd/1, it never appears'; \
@@ -253,7 +253,7 @@ RUN set -eux; \
 		echo; \
 		echo '; Ensure worker stdout and stderr are sent to the main error log.'; \
 		echo 'catch_workers_output = yes'; \
-		echo 'decorate_workers_output = no'; \
+		echo '# decorate_workers_output = no'; \
 	} | tee php-fpm.d/docker.conf; \
 	{ \
 		echo '[global]'; \
