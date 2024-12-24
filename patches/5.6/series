@@ -88,4 +88,21 @@ Disable-firebird.patch
 
 0223-Add-missing-declaration-of-mbfl_filt_put_invalid_cha.patch
 
+0224-Fix-GHSA-w8qr-v226-r27w.patch
+
+0226-Fix-GHSA-3qgc-jrrr-25jv.patch
+0227-Fix-GHSA-3qgc-jrrr-25jv-VC11.patch
+
+0229-Fix-GHSA-9pqp-7h25-4f32.patch
+0230-Fix-GHSA-p99j-rfp4-xqvq.patch
+0231-Fix-GHSA-94p6-54jq-9mwp.patch
+0232-Skip-GHSA-9pqp-7h25-4f32-test-on-Windows.patch
+0234-adapt-GHSA-9pqp-7h25-4f32-test-for-7.x.patch
+
+0235-Fix-GHSA-c5f2-jwm7-mmq2-stream-HTTP-fulluri-CRLF-inj.patch
+0236-Fix-GHSA-g665-fm4p-vhff-OOB-access-in-ldap_escape.patch
+0237-Fix-GHSA-r977-prxv-hc43.patch
+0238-Fix-74267-segfault-with-streams-and-invalid-data.patch
+0239-Fix-GHSA-4w77-75f9-2c8w.patch
+
 9999-version-joellinn.patch
