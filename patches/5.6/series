@@ -71,4 +71,9 @@ Disable-firebird.patch
 0204-Fix-81740-PDO-quote-may-return-unquoted-string.patch
 0205-adapt-test-for-5.x.patch
 
+0207-crypt-Fix-validation-of-malformed-BCrypt-hashes.patch
+0208-crypt-Fix-possible-buffer-overread-in-php_crypt.patch
+0209-Fix-array-overrun-when-appending-slash-to-paths.patch
+
+
 9999-version-joellinn.patch
