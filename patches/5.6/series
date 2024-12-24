@@ -86,4 +86,6 @@ Disable-firebird.patch
 0219-Fix-GHSA-wpj3-hf5j-x4v4-__Host-__Secure-cookie-bypas.patch
 0221-Fix-bug-GHSA-q6x7-frmf-grcw-password_verify-can-erro.patch
 
+0223-Add-missing-declaration-of-mbfl_filt_put_invalid_cha.patch
+
 9999-version-joellinn.patch
