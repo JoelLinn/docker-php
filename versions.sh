@@ -94,7 +94,7 @@ for version in "${versions[@]}"; do
 	; do
 		for variant in cli apache fpm zts; do
 			if [ "$rcVersion" = '5.6' ]; then
-				if [ "$suite" != 'bullseye' ] && [ "$suite" != 'buster' ]; then
+				if [ "$suite" != 'bookworm' ] && [ "$suite" != 'bullseye' ]; then
 					continue
 				fi
 				if [ "$variant" = 'zts' ]; then

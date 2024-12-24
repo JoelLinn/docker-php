@@ -37,7 +37,7 @@ def main(ctx):
 
 def steps_56():
     s = []
-    for base in ['bullseye', 'buster']:
+    for base in ['bookworm', 'bullseye']:
         for variant in ['apache', 'cli', 'fpm']:
             s.append(step_image('5.6', base, variant))
     return s
