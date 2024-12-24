@@ -3,6 +3,7 @@ name: Verify Templating
 on:
   pull_request:
   push:
+  workflow_dispatch:
 
 defaults:
   run:
@@ -13,10 +14,6 @@ jobs:
     name: Check For Uncomitted Changes
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
-      - name: Apply Templates
-        run: ./apply-templates.sh
-      - name: Check Git Status
-        run: |
-          status="$(git status --short)"
-          [ -z "$status" ]
+      - uses: actions/checkout@v4
+      - run: ./apply-templates.sh
+      - run: git diff --exit-code
