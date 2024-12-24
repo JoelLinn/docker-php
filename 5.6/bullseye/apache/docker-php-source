@@ -24,6 +24,7 @@ case "$1" in
 				mkdir -p "$dir/patches"
 				tar -Jxf /usr/src/php_patches.tar.xz -C "$dir/patches"
 				for patch in `sed '/^\s*$/d' $dir/patches/series`; do
+					echo '===== Applying patch '"$dir/patches/$patch"' ====='
 					patch -fruN -p 1 -d "$dir" < "$dir/patches/$patch"
 				done
 			fi
