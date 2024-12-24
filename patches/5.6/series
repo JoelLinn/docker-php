@@ -75,5 +75,15 @@ Disable-firebird.patch
 0208-crypt-Fix-possible-buffer-overread-in-php_crypt.patch
 0209-Fix-array-overrun-when-appending-slash-to-paths.patch
 
+0211-Increase-random-bytes-in-HTTP-Digest-authentication-.patch
+
+0213-Fix-buffer-mismanagement-in-phar_dir_read.patch
+0214-Sanitize-libxml2-globals-before-parsing.patch
+0216-fix-backport.patch
+0217-Sanitize-libxml2-globals-before-parsing-VC11-compati.patch
+0218-Fix-buffer-mismanagement-in-phar_dir_read-VC11-compa.patch
+
+0219-Fix-GHSA-wpj3-hf5j-x4v4-__Host-__Secure-cookie-bypas.patch
+0221-Fix-bug-GHSA-q6x7-frmf-grcw-password_verify-can-erro.patch
 
 9999-version-joellinn.patch
