@@ -89,6 +89,9 @@ for version; do
 				--sort=name \
 				-C "patches/$version" \
 				"./"
+			sed -ri \
+				-e '/##<\/?patches>##/d' \
+				"$version/$suite/$variant/docker-php-source"
 		else
 			sed -ri \
 				-e '/##<patches>##/,/##<\/patches>##/d' \

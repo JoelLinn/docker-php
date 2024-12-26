@@ -19,7 +19,6 @@ case "$1" in
 		mkdir -p "$dir"
 		if [ ! -f "$dir/.docker-extracted" ]; then
 			tar -Jxf /usr/src/php.tar.xz -C "$dir" --strip-components=1
-##<patches>##
 			if [ -f /usr/src/php_patches.tar.xz ]; then
 				mkdir -p "$dir/patches"
 				tar -Jxf /usr/src/php_patches.tar.xz -C "$dir/patches"
@@ -28,7 +27,6 @@ case "$1" in
 					patch -fruN -p 1 -d "$dir" < "$dir/patches/$patch"
 				done
 			fi
-##</patches>##
 			touch "$dir/.docker-extracted"
 		fi
 		;;
