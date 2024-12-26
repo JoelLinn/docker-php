@@ -98,6 +98,18 @@ for version; do
 				"$version/$suite/$variant/docker-php-source"
 		fi
 
+		if [ "$version" = "5.6" ]; then
+			module_so_variant="required"
+		else
+			module_so_variant="optional"
+		fi
+		sed -ri \
+			-e "/##<module_so_${module_so_variant}>##/,/##<\/module_so_${module_so_variant}>##/d" \
+			"$version/$suite/$variant/docker-php-ext-enable"
+		sed -ri \
+			-e "/##<\/?module_so_(required|optional)>##/d" \
+			"$version/$suite/$variant/docker-php-ext-enable"
+
 		cmd="$(jq <<<"$cmd" -r '.[0]')"
 		if [ "$cmd" != 'php' ]; then
 			sed -i -e 's! php ! '"$cmd"' !g' "$version/$dir/docker-php-entrypoint"
